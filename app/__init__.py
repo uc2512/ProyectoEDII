@@ -25,7 +25,8 @@ def crear_app():
     login_manager.init_app(app)
     login_manager.login_view = 'rutas.login'
 
-    from app.modelos import Usuario
+    
+    from app.modelos import Usuario, Paciente, Sesion
 
     @login_manager.user_loader
     def cargar_usuario(id):
@@ -33,5 +34,9 @@ def crear_app():
 
     from app.rutas import rutas
     app.register_blueprint(rutas)
+
+    
+    with app.app_context():
+        db.create_all()
 
     return app
