@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block contenido %}
+
+<div id="infoPaciente" class="mb-4">
+    <h4 id="nombrePaciente"></h4>
+</div>
+<span id="carnetData" data-carnet="{{ carnet }}" class="d-none"></span>
+
+<h5>Agregar Sesión</h5>
+<form id="formSesion" class="row g-3 mb-5">
+    <div class="col-12">
+        <textarea id="diagnostico" class="form-control" placeholder="Diagnóstico" rows="3" required></textarea>
+    </div>
+    <div class="col-12">
+        <textarea id="tratamiento" class="form-control" placeholder="Tratamiento aplicado" rows="3" required></textarea>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-success">Guardar sesión</button>
+        <a href="/" class="btn btn-secondary">Volver</a>
+    </div>
+</form>
+
+<h5>Historial de Sesiones</h5>
+<div id="historial"></div>
+
+<script src="{{ url_for('static', filename='js/historial.js') }}"></script>
+{% endblock %}
