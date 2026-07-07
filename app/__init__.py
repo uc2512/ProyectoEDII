@@ -39,8 +39,11 @@ def crear_app():
     with app.app_context():
         db.create_all()
         from app.modelos import Usuario
-        if not Usuario.query.filter_by(usuario="admin").first():
-            nuevo = Usuario(usuario="admin", password="1234")
+        if not Usuario.query.filter_by(usuario="herboT2026").first():
+            nuevo = Usuario(
+                usuario="herboT2026",
+                password="uab2026CIS$"
+            )
             db.session.add(nuevo)
             db.session.commit()
 
