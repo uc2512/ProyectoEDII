@@ -11,7 +11,7 @@ login_manager = LoginManager()
 
 def crear_app():
     app = Flask(__name__,
-                template_folder='../plantillas',
+                template_folder='../templates',
                 static_folder='../estatico')
 
     app.config['SECRET_KEY'] = os.getenv('CLAVE_SECRETA')
