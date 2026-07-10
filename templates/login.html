@@ -4,40 +4,107 @@
 <div class="row justify-content-center mt-5">
     <div class="col-md-4">
         <h4 class="text-center mb-4">Iniciar Sesión</h4>
-        <form id="formLogin">
+
+        <form id="formLogin" autocomplete="off">
+
             <div class="mb-3">
-                <input type="text" id="usuario" class="form-control" placeholder="Usuario" required>
+                <input
+                    type="text"
+                    id="usuario"
+                    class="form-control"
+                    placeholder="Usuario"
+                    maxlength="50"
+                    autocomplete="off"
+                    required>
             </div>
+
             <div class="mb-3">
-                <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    placeholder="Contraseña"
+                    maxlength="128"
+                    autocomplete="off"
+                    required>
             </div>
-            <button type="submit" class="btn btn-success w-100">Entrar</button>
+
+            <button type="submit" class="btn btn-success w-100">
+                Entrar
+            </button>
+
         </form>
+
         <div id="errorLogin" class="alert alert-danger mt-3 d-none"></div>
+
     </div>
 </div>
 
 <script>
+
 document.getElementById('formLogin').addEventListener('submit', async (e) => {
+
     e.preventDefault();
-    const res = await fetch('/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            usuario: document.getElementById('usuario').value,
-            password: document.getElementById('password').value
-        })
-    });
-    const json = await res.json();
-    if (json.ok) window.location.href = '/';
-    else {
-        const error = document.getElementById('errorLogin');
-        error.textContent = json.mensaje;
+
+    const error = document.getElementById('errorLogin');
+
+    error.classList.add('d-none');
+    error.textContent = '';
+
+    const usuario = document.getElementById('usuario').value.trim();
+    const password = document.getElementById('password').value;
+
+    if (!usuario) {
+        error.textContent = 'Debe ingresar un usuario.';
         error.classList.remove('d-none');
-        setTimeout(() => {
-            error.classList.add('d-none');
-        }, 3000);
+        return;
     }
+
+    try {
+
+        const res = await fetch('/login', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify({
+
+                usuario,
+                password
+
+            })
+
+        });
+
+        const json = await res.json();
+
+        if (json.ok) {
+
+            window.location.href = '/';
+
+        } else {
+
+            error.textContent = json.mensaje;
+            error.classList.remove('d-none');
+
+            setTimeout(() => {
+                error.classList.add('d-none');
+            }, 3000);
+
+        }
+
+    } catch (err) {
+
+        error.textContent = 'No fue posible conectar con el servidor.';
+        error.classList.remove('d-none');
+
+    }
+
 });
+
 </script>
+
 {% endblock %}
