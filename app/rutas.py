@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, redirect, url_fo
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.modelos import Paciente, Sesion, Usuario
+from datetime import timedelta
 
 rutas = Blueprint('rutas', __name__)
 
@@ -48,13 +49,21 @@ def buscar_paciente(carnet):
     paciente = Paciente.query.get(carnet)
     if not paciente:
         return jsonify({'mensaje': 'No encontrado'}), 404
-    return jsonify({'nombre': paciente.nombre, 'edad': paciente.edad, 'contacto': paciente.contacto})
+    return jsonify({
+        'nombre': paciente.nombre,
+        'edad': paciente.edad,
+        'contacto': paciente.contacto
+    })
 
 @rutas.route('/paciente/<carnet>/sesion', methods=['POST'])
 @login_required
 def agregar_sesion(carnet):
     datos = request.json
-    sesion = Sesion(carnet=carnet, diagnostico=datos['diagnostico'], tratamiento=datos['tratamiento'])
+    sesion = Sesion(
+        carnet=carnet,
+        diagnostico=datos['diagnostico'],
+        tratamiento=datos['tratamiento']
+    )
     db.session.add(sesion)
     db.session.commit()
     return jsonify({'mensaje': 'Sesión registrada'}), 201
@@ -65,8 +74,17 @@ def ver_sesiones(carnet):
     paciente = Paciente.query.get(carnet)
     if not paciente:
         return jsonify({'mensaje': 'Paciente no encontrado'}), 404
-    sesiones = [{'fecha': s.fecha.strftime('%d/%m/%Y %H:%M'), 'diagnostico': s.diagnostico, 'tratamiento': s.tratamiento} for s in paciente.sesiones]
-    return jsonify({'nombre': paciente.nombre, 'sesiones': sesiones})
+
+    sesiones = [{
+        'fecha': (s.fecha - timedelta(hours=4)).strftime('%d/%m/%Y %H:%M'),
+        'diagnostico': s.diagnostico,
+        'tratamiento': s.tratamiento
+    } for s in paciente.sesiones]
+
+    return jsonify({
+        'nombre': paciente.nombre,
+        'sesiones': sesiones
+    })
 
 @rutas.route('/historial/<carnet>')
 @login_required
